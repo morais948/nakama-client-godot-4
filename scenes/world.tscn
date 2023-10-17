@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://hgetxmdu1gvr"]
+
+[ext_resource type="Texture2D" uid="uid://bjrvmwnxuw3wm" path="res://assets/Blue_Nebula_05-1024x1024.png" id="1_057u4"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_qjwm5"]
+texture = ExtResource("1_057u4")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="world" type="Panel"]
+offset_right = 3000.0
+offset_bottom = 3000.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_qjwm5")

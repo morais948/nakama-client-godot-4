@@ -1,0 +1,96 @@
+[gd_scene load_steps=2 format=3 uid="uid://drxesi0wun21p"]
+
+[ext_resource type="Script" path="res://scripts/login.gd" id="1_xl6hd"]
+
+[node name="login" type="CanvasLayer"]
+script = ExtResource("1_xl6hd")
+
+[node name="enter" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="box" type="VBoxContainer" parent="enter"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -33.5
+offset_top = -33.0
+offset_right = 33.5
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="email" type="LineEdit" parent="enter/box"]
+layout_mode = 2
+text = "mat@gmail.com"
+placeholder_text = "email"
+
+[node name="password" type="LineEdit" parent="enter/box"]
+layout_mode = 2
+text = "123456789"
+placeholder_text = "password"
+secret = true
+
+[node name="send" type="Button" parent="enter/box"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "send"
+
+[node name="register" type="Button" parent="enter/box"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "register"
+
+[node name="register_popup" type="PopupPanel" parent="enter"]
+initial_position = 2
+size = Vector2i(408, 144)
+
+[node name="box" type="VBoxContainer" parent="enter/register_popup"]
+custom_minimum_size = Vector2(400, 0)
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 404.0
+offset_bottom = 140.0
+
+[node name="name" type="LineEdit" parent="enter/register_popup/box"]
+layout_mode = 2
+placeholder_text = "name"
+
+[node name="email" type="LineEdit" parent="enter/register_popup/box"]
+layout_mode = 2
+placeholder_text = "email"
+
+[node name="password" type="LineEdit" parent="enter/register_popup/box"]
+layout_mode = 2
+placeholder_text = "password"
+secret = true
+
+[node name="send" type="Button" parent="enter/register_popup/box"]
+layout_mode = 2
+text = "send"
+
+[node name="info_popup" type="Popup" parent="enter"]
+initial_position = 2
+size = Vector2i(300, 63)
+borderless = false
+
+[node name="info" type="Label" parent="enter/info_popup"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -49.0
+offset_top = -13.0
+offset_right = 49.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "REGISTERED!"
