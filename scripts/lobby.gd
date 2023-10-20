@@ -29,6 +29,9 @@ extends CanvasLayer
 @onready var info_poppup = $info_popup
 @onready var label_info = $info_popup/info
 
+#match elements
+@onready var tbn_cancel = $search_players/cancel
+
 var my_user_id = null
 var min_players = false
 
@@ -45,6 +48,13 @@ func _ready():
 	btn_ready.connect("button_down", ready)
 	btn_match.connect("button_down", go_match)
 	btn_back.connect("button_down", back_from_join)
+	tbn_cancel.connect("button_down", cancel_match)
+
+func cancel_match():
+	await Network.remove_match()
+	show_info("request canceled")
+	section_finding_players.hide()
+	section_btns_actions.show()
 
 func back_from_join():
 	section_join_room.hide()

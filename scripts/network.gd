@@ -16,6 +16,7 @@ var client: NakamaClient
 var session: NakamaSession
 var socket = null
 var room_id = null
+var ticket = null
 
 #IP padrão
 var DEFAULT_HOST = '127.0.0.1'
@@ -63,6 +64,14 @@ func go_match():
 	var max_players = 3
 	var query = "*"
 	var matchmaker_ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async(query, min_players, max_players)
+	ticket = matchmaker_ticket.ticket
+
+func remove_match():
+	if ticket:
+		var removed: NakamaAsyncResult = await socket.remove_matchmaker_async(ticket)
+		if removed.is_exception():
+			print("An error occurred: %s" % removed)
+			return
 
 func _on_matchmaker_matched(p_matched : NakamaRTAPI.MatchmakerMatched):
 	await join_room(p_matched.match_id)
