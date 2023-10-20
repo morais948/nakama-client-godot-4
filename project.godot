@@ -24,6 +24,11 @@ Network="*res://scripts/network.gd"
 
 window/stretch/aspect="expand"
 
+[layer_names]
+
+2d_physics/layer_1="player"
+2d_physics/layer_2="wall"
+
 [rendering]
 
 renderer/rendering_method="mobile"

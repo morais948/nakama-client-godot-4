@@ -1,8 +1,12 @@
 extends Node
 
-class_name op_codes
+class_name OP_CODES
 
-const position = 1
-const quantity_min_player_in_room = 2
-const canceled_go = 3
-const go_to_world_scene = 4
+#codigos do cliente
+const SEND_POSITION_PLAYER = 1
+const SEND_READY = 2
+
+#codigos do servidor
+const READY = 3
+const LETS_GO = 4
+const POSITION_PLAYER = 5

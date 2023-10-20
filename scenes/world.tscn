@@ -1,13 +1,65 @@
-[gd_scene load_steps=3 format=3 uid="uid://hgetxmdu1gvr"]
+[gd_scene load_steps=8 format=3 uid="uid://hgetxmdu1gvr"]
 
 [ext_resource type="Texture2D" uid="uid://bjrvmwnxuw3wm" path="res://assets/Blue_Nebula_05-1024x1024.png" id="1_057u4"]
+[ext_resource type="Script" path="res://scripts/world.gd" id="2_qacsg"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_qjwm5"]
 texture = ExtResource("1_057u4")
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pyn83"]
+size = Vector2(3082, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ekff6"]
+size = Vector2(3082, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bv0yb"]
+size = Vector2(3082, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qa5j0"]
+size = Vector2(3082, 20)
+
 [node name="world" type="Panel"]
 offset_right = 3000.0
 offset_bottom = 3000.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_qjwm5")
+script = ExtResource("2_qacsg")
+
+[node name="wall" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="shape" type="CollisionShape2D" parent="wall"]
+position = Vector2(1491, -8)
+shape = SubResource("RectangleShape2D_pyn83")
+
+[node name="wall2" type="StaticBody2D" parent="."]
+position = Vector2(0, 3000)
+collision_layer = 2
+collision_mask = 0
+
+[node name="shape" type="CollisionShape2D" parent="wall2"]
+position = Vector2(1493, 4)
+shape = SubResource("RectangleShape2D_ekff6")
+
+[node name="wall3" type="StaticBody2D" parent="."]
+rotation = 1.5708
+collision_layer = 2
+collision_mask = 0
+
+[node name="shape" type="CollisionShape2D" parent="wall3"]
+position = Vector2(1490, 6.99988)
+shape = SubResource("RectangleShape2D_bv0yb")
+
+[node name="wall4" type="StaticBody2D" parent="."]
+position = Vector2(3000, 0)
+rotation = 1.5708
+collision_layer = 2
+collision_mask = 0
+
+[node name="shape" type="CollisionShape2D" parent="wall4"]
+position = Vector2(1491, -8)
+shape = SubResource("RectangleShape2D_qa5j0")
+
+[node name="other_players" type="Node" parent="."]

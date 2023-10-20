@@ -4,88 +4,112 @@ extends CanvasLayer
 @onready var world_scene = preload("res://scenes/world.tscn")
 
 #sections
-@onready var btns_actions = $btns
-@onready var room = $room
-@onready var join_room = $join_room
+@onready var section_btns_actions = $btns
+@onready var section_room = $room
+@onready var section_join_room = $join_room
+@onready var section_finding_players = $search_players
 
 #actions btns
 @onready var btn_create = $btns/create
 @onready var btn_join = $btns/join
-@onready var btn_go = $go
+@onready var btn_match = $btns/match
 
 #room current
 @onready var id_room_label = $room/info/id
 @onready var player_label = $room/players/label
 @onready var btn_copy = $room/info/copy
+@onready var btn_ready = $room/info/ready
 
 #join room
 @onready var id_room_to_send = $join_room/id_room_to_send
 @onready var btn_joined_room = $join_room/send
+@onready var btn_back = $join_room/back
+
+#info elemetns
+@onready var info_poppup = $info_popup
+@onready var label_info = $info_popup/info
 
 var my_user_id = null
 var min_players = false
 
 func _ready():
-	Network.connect("user_id_loaded", set_user_id)
-	Network.connect("update_players_in_room", update_players_in_room)
-	Network.connect("quantity_min_player_in_room", set_visible_btn_go)
-	Network.connect("canceled_go", set_hide_btn_go)
-	Network.connect("go_to_world_scene", go_to_world_scene)
+	Network.connect("update_state", update_state)
+	Network.connect("ready_player", ready_player)
+	Network.connect("start_game", start_game)
+	Network.connect("match_found", match_found)
 	
 	btn_copy.connect("button_down", copy_id)
-	
 	btn_create.connect("button_down", create_room)
-	btn_join.connect("button_down", show_join_room)
-	
-	btn_joined_room.connect("button_down", joined_room)
-	btn_go.connect("button_down", go_to_world)
+	btn_join.connect("button_down", join_room)
+	btn_joined_room.connect("button_down", send_join_room)
+	btn_ready.connect("button_down", ready)
+	btn_match.connect("button_down", go_match)
+	btn_back.connect("button_down", back_from_join)
 
-func go_to_world_scene():
-	get_tree().change_scene_to_packed(world_scene)
+func back_from_join():
+	section_join_room.hide()
+	section_btns_actions.show()
 
-func go_to_world():
-	await Network.send_state_room(id_room_label.text, 'go_to_world_scene', op_codes.go_to_world_scene)
-	get_tree().change_scene_to_packed(world_scene)
+func match_found():
+	id_room_label.text = Network.room_id
+	section_finding_players.hide()
+	section_room.show()
 
-func set_visible_btn_go():
-	btn_go.show()
-
-func set_hide_btn_go():
-	btn_go.hide()
-
-func _process(delta):
-	if Network.state.players.values().size() >= 2 and !min_players:
-		min_players = true
-		await Network.send_state_room(id_room_label.text, 'go', op_codes.quantity_min_player_in_room)
-		btn_go.show()
-	
-	if Network.state.players.values().size() < 2:
-		min_players = false
-		btn_go.hide()
+func go_match():
+	section_btns_actions.hide()
+	section_finding_players.show()
+	await Network.go_match()
 
 func create_room():
-	btns_actions.hide()
-	room.show()
+	section_btns_actions.hide()
+	section_room.show()
 	id_room_label.text = await Network.create_room()
 
-func joined_room():
-	id_room_label.text = await Network.join_room(id_room_to_send.text)
-	join_room.hide()
-	update_players_in_room()
-	room.show()
+func join_room():
+	section_btns_actions.hide()
+	section_join_room.show()
 
-func show_join_room():
-	btns_actions.hide()
-	join_room.show()
-
-func set_user_id(id):
-	my_user_id = id
+func send_join_room():
+	var response = await Network.join_room(id_room_to_send.text)
+	if response:
+		id_room_label.text = response
+		section_join_room.hide()
+		section_room.show()
+	else:
+		show_info("full match")
 
 func copy_id():
 	DisplayServer.clipboard_set(id_room_label.text)
 
-func update_players_in_room():
-	player_label.text = ''
+func update_state():
+	var labels = get_node("room/players").get_children()
+	for label in labels:
+		get_node("room/players").remove_child(label)
+
 	var players = Network.state.players
 	for id in players:
-		player_label.text += '\n' + players[id].username
+		var label = Label.new()
+		label.horizontal_alignment = true
+		label.name = players[id].presence.userId
+		if players[id].isReady:
+			label.text = players[id].presence.username + '✅'
+		else:
+			label.text = players[id].presence.username
+		get_node("room/players").add_child(label)
+
+func ready():
+	await Network.send_state_room(id_room_label.text, "", OP_CODES.SEND_READY)
+
+func ready_player(user_id):
+	var labels = get_node("room/players").get_children()
+	for label in labels:
+		if label.name == user_id:
+			label.text = Network.state.players[user_id].presence.username + '✅'
+
+func start_game():
+	get_tree().change_scene_to_packed(world_scene)
+
+func show_info(text):
+	label_info.text = text
+	info_poppup.popup()
+
