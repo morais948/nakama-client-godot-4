@@ -3,7 +3,7 @@
 <p>What was done?</p>
 <ul>
   <li>
-    Configured a godot 4 client with basic functionalities of a real-time game relayed.
+    I configured a Godot 4 client with basic functionalities of a real-time game with authoritative logic.
   </li>
   <li>
     Authentication with email and password.
