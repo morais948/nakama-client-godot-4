@@ -81,12 +81,13 @@ func join_room():
 
 func send_join_room():
 	var response = await Network.join_room(id_room_to_send.text)
-	if response:
-		id_room_label.text = response
+
+	if response.success:
+		id_room_label.text = response.data
 		section_join_room.hide()
 		section_room.show()
 	else:
-		show_info("full match")
+		show_info(response.error)
 
 func copy_id():
 	DisplayServer.clipboard_set(id_room_label.text)
@@ -122,4 +123,3 @@ func start_game():
 func show_info(text):
 	label_info.text = text
 	info_poppup.popup()
-

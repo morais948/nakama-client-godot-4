@@ -5,7 +5,7 @@ extends Panel
 
 func _ready():
 	Network.connect("moviment_other_player", moviment_other_player)
-#	Network.connect("update_players_in_room",update_players_in_room)
+	Network.connect("player_exit_match", player_exit_match)
 	instance_my_player()
 	instance_other_players()
 	pass
@@ -47,14 +47,9 @@ func instance_other_players():
 			get_node("other_players").add_child(p)
 			p.set_my_name(other_players[id]['presence'].username)
 
-func move_other_player(data_string):
-	var data = JSON.parse_string(JSON.parse_string(data_string))
-	var other_player = get_node("other_players/" + data['id'])
-	other_player.move_to(Vector2(int(data['position']['x']), int(data['position']['y'])))
-
-func update_players_in_room():
+func player_exit_match(id):
 	var players_removed = get_node("other_players").get_children()
 	for player in players_removed:
-		get_node("other_players").remove_child(player)
-	
-	instance_other_players()
+		if id == player.name:
+			get_node("other_players").remove_child(player)
+

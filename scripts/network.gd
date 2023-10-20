@@ -11,6 +11,7 @@ signal update_state
 signal ready_player
 signal moviment_other_player
 signal match_found
+signal player_exit_match
 
 var client: NakamaClient
 var session: NakamaSession
@@ -49,15 +50,24 @@ func create_room():
 func join_room(match_id):
 	var joined_match = await socket.join_match_async(match_id)
 	if joined_match.is_exception():
-		print("An error occurred: %s" % joined_match)
-		return null
+		print("Error: %s" % joined_match.get_exception().message)
+		
+		return {
+			success = false,
+			error = joined_match.get_exception().message,
+			data = null
+		}
 
 	for player in joined_match.presences:
 		state.players[player.user_id] = player
 		
 	room_id = match_id
 	get_state_server(joined_match.match_id)
-	return joined_match.match_id
+	return {
+		success = true,
+		error = '',
+		data = joined_match.match_id
+	}
 
 func go_match():
 	var min_players = 2
@@ -95,11 +105,12 @@ func create_socket():
 func _on_match_presence(p_presence: NakamaRTAPI.MatchPresenceEvent):
 	for p in p_presence.joins:
 		state.players[p.user_id] = p
-		get_state_server(room_id)
+		await get_state_server(room_id)
 
 	for p in p_presence.leaves:
 		state.players.erase(p.user_id)
-		get_state_server(room_id)
+		await get_state_server(room_id)
+		emit_signal("player_exit_match", p.user_id)
 
 func _on_match_state(p_state: NakamaRTAPI.MatchData):
 	match p_state.op_code:
@@ -113,7 +124,6 @@ func _on_match_state(p_state: NakamaRTAPI.MatchData):
 			var data = JSON.parse_string(p_state.data)
 			if data.id != Network.session.user_id:
 				emit_signal("moviment_other_player", data)
-			
 
 func send_state_room(match_id, new_state, op_code):
 	socket.send_match_state_async(match_id, op_code, JSON.stringify(new_state))
